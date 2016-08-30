@@ -39,9 +39,9 @@
         //注入本地js
         [_webView addUserScriptWithPath:[[NSBundle mainBundle] pathForResource:@"testJS" ofType:@"js"] injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
         
-        //向js注入AppModel对象，这样js可以该对象传值
+        //向js注入TestModel对象，这样js可以该对象传值
         SMScriptMessageDelegate *sDelegate=[[SMScriptMessageDelegate alloc] initWithDelegate:(id)self];
-        [self.webView addScriptMessageHandler:sDelegate name:@"AppModel"];
+        [self.webView addScriptMessageHandler:sDelegate name:@"TestModel"];
         
         //因为wk不支持nsurlcachie 如果想实现设置cachie，可通过植入js代码的方式实现 调用jsdocument.cookie来设置
         [_webView addUserScriptWithJS:[NSString stringWithFormat:@"document.cookie=\'%@\'",[NSString stringWithFormat:@"JSESSIONID=272173718"]] injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO];
