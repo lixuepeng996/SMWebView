@@ -1,0 +1,42 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <style>
+    input{
+      width : 100px;
+      height : 80px;
+      margin : 20px;
+    }
+  </style>
+</head>
+<body>
+  <input type="button" id="toast" value="toast" />
+<script>
+/*
+  var wobridge = {
+      tttt : function (argument) {
+          if(argument){
+          window.webkit.messageHandlers.AppModel.postMessage(argument);
+          }
+      }
+  };
+ */
+function submit(argument){
+     alert("ok");
+}
+    var toast = document.getElementById("toast");
+
+  toast.addEventListener('click',function(){
+   //wk调用方式
+  //  wobridge.tttt({fun : "tttt", prama : "这是一个测试！！！！！！"});
+    submit({fun : "submit", prama : "这是一个测试！！！！！！"});
+  });
+
+</script>
+</body>
+</html>
