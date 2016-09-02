@@ -37,6 +37,10 @@
 @property (nonatomic, readonly, getter=isLoading) BOOL loading;
 @property (nonatomic, readonly) BOOL canGoBack;//网页是否可后退
 @property (nonatomic, readonly) BOOL canGoForward;//网页是否可前进
+@property(nonatomic,assign) BOOL bounces;
+@property(nonatomic,assign) BOOL showsHorizontalScrollIndicator;
+@property(nonatomic,assign) BOOL showsVerticalScrollIndicator;
++(void)clearWebCache;//清除缓存
 
 - (id)loadRequest:(NSURLRequest *)request;
 - (id)loadHTMLString:(NSString *)string baseURL:(NSURL *)baseURL;

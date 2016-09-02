@@ -20,6 +20,72 @@
 @end
 
 @implementation SMWebView
+
++(void)clearWebCache{
+    NSString *libraryDir = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask, YES)[0];
+    NSString *bundleId  =  [[[NSBundle mainBundle] infoDictionary]
+                            objectForKey:@"CFBundleIdentifier"];
+    if (IPHONE_OS_VERSION_CURRENT_REQUIRED<8) {
+        [[NSURLCache sharedURLCache] removeAllCachedResponses];
+        NSString *webKitFolderInCachesfs = [NSString stringWithFormat:@"%@/Caches/%@/fsCachedData",libraryDir,bundleId];
+        [[NSFileManager defaultManager] removeItemAtPath:webKitFolderInCachesfs  error:nil];
+    }else{
+        NSString *webkitFolderInLib = [NSString stringWithFormat:@"%@/WebKit",libraryDir];
+        NSString *webKitFolderInCaches = [NSString stringWithFormat:@"%@/Caches/%@/WebKit",libraryDir,bundleId];
+        if (IPHONE_OS_VERSION_CURRENT_REQUIRED>=9.0) {
+            NSSet *websiteDataTypes = [WKWebsiteDataStore allWebsiteDataTypes];
+            WKWebsiteDataStore *dateStore = [WKWebsiteDataStore defaultDataStore];
+            [dateStore fetchDataRecordsOfTypes:websiteDataTypes
+                             completionHandler:^(NSArray<WKWebsiteDataRecord *> * __nonnull records) {
+                                 for (WKWebsiteDataRecord *record  in records)
+                                 {
+                                     //                             if ( [record.displayName containsString:@"baidu"]) //取消备注，可以针对某域名清除，否则是全清
+                                     //                             {
+                                     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:record.dataTypes forDataRecords:@[record] completionHandler:^{
+                                         NSLog(@"Cookies for %@ deleted successfully",record.displayName);
+                                     }];
+                                     //                             }
+                                 }
+                             }];
+            
+        }else{
+            [[NSURLCache sharedURLCache] removeAllCachedResponses];
+            NSError *errors;
+            [[NSFileManager defaultManager] removeItemAtPath:webkitFolderInLib error:&errors];
+            [[NSFileManager defaultManager] removeItemAtPath:webKitFolderInCaches error:&errors];
+        }
+    }
+}
+
+
+
+-(void)setBounces:(BOOL)bounces{
+    _bounces=bounces;
+    if (self.isUseUIWebView == NO) {
+        ((WKWebView*)self.webView).scrollView.bounces=bounces;
+    }else{
+        ((UIWebView*)self.webView).scrollView.bounces=bounces;
+    }
+}
+
+-(void)setShowsVerticalScrollIndicator:(BOOL)showsVerticalScrollIndicator{
+    _showsVerticalScrollIndicator=showsVerticalScrollIndicator;
+    if (self.isUseUIWebView == NO) {
+        ((WKWebView*)self.webView).scrollView.showsVerticalScrollIndicator=showsVerticalScrollIndicator;
+    }else{
+        ((UIWebView*)self.webView).scrollView.showsVerticalScrollIndicator=showsVerticalScrollIndicator;
+    }
+}
+
+-(void)setShowsHorizontalScrollIndicator:(BOOL)showsHorizontalScrollIndicator{
+    _showsHorizontalScrollIndicator=showsHorizontalScrollIndicator;
+    if (self.isUseUIWebView == NO) {
+        ((WKWebView*)self.webView).scrollView.showsHorizontalScrollIndicator=showsHorizontalScrollIndicator;
+    }else{
+        ((UIWebView*)self.webView).scrollView.showsHorizontalScrollIndicator=showsHorizontalScrollIndicator;
+    }
+}
+
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
     self = [super initWithCoder:coder];
@@ -37,7 +103,7 @@
 }
 
 -(id)initWithFrame:(CGRect)frame isUseUIWebView:(BOOL)useUIWebView{
-
+    
     if (self=[super initWithFrame:frame]) {
         _isUseUIWebView=useUIWebView;
         [self createWebView];
@@ -53,7 +119,7 @@
     else
     {
         [self createUIWebView];
-     
+        
     }
     [self.webView setFrame:self.bounds];
     [self.webView setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
@@ -86,7 +152,7 @@
 }
 
 -(void)createUIWebView{
-     _isUseUIWebView = YES;
+    _isUseUIWebView = YES;
     UIWebView* webView = [[UIWebView alloc] initWithFrame:self.bounds];
     webView.backgroundColor = [UIColor clearColor];
     webView.opaque = NO;
@@ -475,11 +541,11 @@
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect {
+ // Drawing code
+ }
+ */
 
 @end
